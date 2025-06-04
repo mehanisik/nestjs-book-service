@@ -1,77 +1,81 @@
 {
-  "name": "nestjs-book-service",
-  "version": "0.0.1",
-  "description": "A NestJS service for managing books",
-  "author": "mehanisik",
-  "license": "MIT",
-  "scripts": {
-    "build": "nest build",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "lint": "biome lint --write src",
-    "format": "biome format --write src",
-    "prepare": "husky || true",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
-  },
-  "dependencies": {
-    "@nestjs/axios": "^4.0.0",
-    "@nestjs/common": "^11.1.2",
-    "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.2",
-    "@nestjs/platform-express": "^11.1.2",
-    "@nestjs/swagger": "^11.2.0",
-    "@nestjs/terminus": "^11.0.0",
-    "dotenv": "^16.5.0",
-    "lint-staged": "^16.1.0",
-    "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2",
-    "tslib": "^2.8.1"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "@nestjs/cli": "^11.0.7",
-    "@nestjs/schematics": "^11.0.5",
-    "@nestjs/testing": "^11.1.2",
-    "@swc/cli": "^0.6.0",
-    "@swc/core": "^1.11.29",
-    "@types/express": "^5.0.2",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.29",
-    "@types/supertest": "^6.0.3",
-    "globals": "^16.2.0",
-    "husky": "^9.1.7",
-    "jest": "^29.7.0",
-    "source-map-support": "^0.5.21",
-    "supertest": "^7.1.1",
-    "ts-jest": "^29.3.4",
-    "ts-loader": "^9.5.2",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.8.3"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  }
+	"name": "nestjs-book-service",
+	"version": "0.0.1",
+	"description": "A NestJS service for managing books",
+	"author": "mehanisik",
+	"license": "MIT",
+	"scripts": {
+		"build": "nest build",
+		"start": "nest start",
+		"start:dev": "nest start --watch",
+		"start:debug": "nest start --debug --watch",
+		"start:prod": "node dist/main",
+		"lint": "biome lint --write src",
+		"format": "biome format --write src",
+		"prepare": "husky || true",
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"test:cov": "jest --coverage",
+		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+		"test:e2e": "jest --config ./test/jest-e2e.json"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^1.0.0",
+		"@nestjs/axios": "^4.0.0",
+		"@nestjs/common": "^11.1.2",
+		"@nestjs/config": "^4.0.2",
+		"@nestjs/core": "^11.1.2",
+		"@nestjs/platform-express": "^11.1.2",
+		"@nestjs/swagger": "^11.2.0",
+		"@nestjs/terminus": "^11.0.0",
+		"@nestjs/typeorm": "^11.0.0",
+		"dotenv": "^16.5.0",
+		"lint-staged": "^16.1.0",
+		"pg": "^8.16.0",
+		"reflect-metadata": "^0.2.2",
+		"rxjs": "^7.8.2",
+		"tslib": "^2.8.1",
+		"typeorm": "^0.3.24"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@commitlint/cli": "^19.8.1",
+		"@commitlint/config-conventional": "^19.8.1",
+		"@nestjs/cli": "^11.0.7",
+		"@nestjs/schematics": "^11.0.5",
+		"@nestjs/testing": "^11.1.2",
+		"@swc/cli": "^0.6.0",
+		"@swc/core": "^1.11.29",
+		"@types/express": "^5.0.2",
+		"@types/jest": "^29.5.14",
+		"@types/node": "^22.15.29",
+		"@types/supertest": "^6.0.3",
+		"globals": "^16.2.0",
+		"husky": "^9.1.7",
+		"jest": "^29.7.0",
+		"source-map-support": "^0.5.21",
+		"supertest": "^7.1.1",
+		"ts-jest": "^29.3.4",
+		"ts-loader": "^9.5.2",
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.8.3"
+	},
+	"jest": {
+		"moduleFileExtensions": [
+			"js",
+			"json",
+			"ts"
+		],
+		"rootDir": "src",
+		"testRegex": ".*\\.spec\\.ts$",
+		"transform": {
+			"^.+\\.(t|j)s$": "ts-jest"
+		},
+		"collectCoverageFrom": [
+			"**/*.(t|j)s"
+		],
+		"coverageDirectory": "../coverage",
+		"testEnvironment": "node"
+	}
 }

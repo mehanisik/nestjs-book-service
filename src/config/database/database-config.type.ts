@@ -1,7 +1,7 @@
 export type DatabaseConfig = {
-	host: string;
-	port: number;
-	username: string;
-	password: string;
-	name: string;
+	url: string;
+	type: "postgres";
+	ssl: boolean;
+	synchronize: boolean;
+	entities: string[];
 };
