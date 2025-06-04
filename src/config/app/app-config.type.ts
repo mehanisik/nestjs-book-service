@@ -1,4 +1,4 @@
-export type AppConfig = {
+export interface AppConfig {
 	port: number;
 	env: string;
 	name: string;
@@ -7,4 +7,6 @@ export type AppConfig = {
 	corsOrigin: string | string[];
 	jwtSecret: string;
 	jwtExpiresIn: string;
-};
+	cloudinaryUrl: string;
+	cloudinaryFolder: string;
+}

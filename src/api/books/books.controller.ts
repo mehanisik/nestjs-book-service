@@ -8,94 +8,288 @@ import {
 	Delete,
 	UseGuards,
 	Request,
+	UseInterceptors,
+	UploadedFile,
+	ParseFilePipe,
+	MaxFileSizeValidator,
+	FileTypeValidator,
+	HttpCode,
+	HttpStatus,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import {
 	ApiTags,
 	ApiOperation,
 	ApiResponse,
 	ApiBearerAuth,
+	ApiConsumes,
+	ApiBody,
+	ApiParam,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { BooksService } from "./books.service";
 import { CreateBookDto } from "./dto/create-book.dto";
 import { UpdateBookDto } from "./dto/update-book.dto";
 import { Book } from "./entities/book.entity";
+import { CloudinaryService } from "../cloudinary/cloudinary.service";
+import { memoryStorage } from "multer";
+
+const FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FILE_TYPES = /(jpg|jpeg|png)$/;
 
 @ApiTags("Books")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller("books")
 export class BooksController {
-	constructor(private readonly booksService: BooksService) {}
+	constructor(
+		private readonly booksService: BooksService,
+		private readonly cloudinaryService: CloudinaryService,
+	) {}
 
 	@Post()
-	@ApiOperation({ summary: "Create a new book" })
+	@HttpCode(HttpStatus.CREATED)
+	@ApiOperation({
+		summary: "Create a new book",
+		description:
+			"Creates a new book with optional cover image. The image will be uploaded to Cloudinary and the URL will be stored.",
+	})
+	@ApiConsumes("multipart/form-data")
+	@ApiBody({
+		schema: {
+			type: "object",
+			required: ["title", "author", "year"],
+			properties: {
+				title: {
+					type: "string",
+					example: "The Great Gatsby",
+					description: "The title of the book",
+				},
+				author: {
+					type: "string",
+					example: "F. Scott Fitzgerald",
+					description: "The author of the book",
+				},
+				year: {
+					type: "number",
+					example: 1925,
+					description: "The year the book was published",
+				},
+				coverImage: {
+					type: "string",
+					format: "binary",
+					description:
+						"Book cover image (JPG, JPEG, or PNG, max 5MB). The image will be resized to 500x500 pixels while maintaining aspect ratio.",
+				},
+			},
+		},
+	})
+	@UseInterceptors(FileInterceptor("coverImage", { storage: memoryStorage() }))
 	@ApiResponse({
-		status: 201,
+		status: HttpStatus.CREATED,
 		description: "The book has been successfully created.",
 		type: Book,
 	})
-	@ApiResponse({ status: 400, description: "Bad request." })
-	@ApiResponse({ status: 401, description: "Unauthorized." })
-	create(@Body() createBookDto: CreateBookDto, @Request() req) {
-		return this.booksService.create(createBookDto, req.user);
+	@ApiResponse({
+		status: HttpStatus.BAD_REQUEST,
+		description: "Invalid input data or file format/size.",
+	})
+	@ApiResponse({
+		status: HttpStatus.UNAUTHORIZED,
+		description: "User is not authenticated.",
+	})
+	async create(
+		@Body() createBookDto: CreateBookDto,
+		@Request() req,
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: FILE_SIZE_LIMIT }),
+					new FileTypeValidator({ fileType: ALLOWED_FILE_TYPES }),
+				],
+				fileIsRequired: false,
+			}),
+		)
+		file?: Express.Multer.File,
+	) {
+		const coverImageUrl = file
+			? await this.cloudinaryService.uploadImage(file)
+			: undefined;
+		return this.booksService.create(
+			{ ...createBookDto, coverImageUrl },
+			req.user,
+		);
 	}
 
 	@Get()
-	@ApiOperation({ summary: "Get all books for the authenticated user" })
+	@ApiOperation({
+		summary: "Get all books",
+		description: "Retrieves all books for the authenticated user.",
+	})
 	@ApiResponse({
-		status: 200,
-		description: "Return all books for the authenticated user.",
+		status: HttpStatus.OK,
+		description: "Returns an array of books.",
 		type: [Book],
 	})
-	@ApiResponse({ status: 401, description: "Unauthorized." })
+	@ApiResponse({
+		status: HttpStatus.UNAUTHORIZED,
+		description: "User is not authenticated.",
+	})
 	findAll(@Request() req) {
 		return this.booksService.findAll(req.user);
 	}
 
 	@Get(":id")
-	@ApiOperation({ summary: "Get a book by id" })
+	@ApiOperation({
+		summary: "Get a book by ID",
+		description:
+			"Retrieves a specific book by its ID. The book must belong to the authenticated user.",
+	})
+	@ApiParam({
+		name: "id",
+		description: "The ID of the book to retrieve",
+		type: "string",
+		format: "uuid",
+	})
 	@ApiResponse({
-		status: 200,
-		description: "Return the book.",
+		status: HttpStatus.OK,
+		description: "Returns the requested book.",
 		type: Book,
 	})
-	@ApiResponse({ status: 401, description: "Unauthorized." })
-	@ApiResponse({ status: 403, description: "Forbidden." })
-	@ApiResponse({ status: 404, description: "Book not found." })
+	@ApiResponse({
+		status: HttpStatus.NOT_FOUND,
+		description: "Book not found.",
+	})
+	@ApiResponse({
+		status: HttpStatus.UNAUTHORIZED,
+		description: "User is not authenticated.",
+	})
+	@ApiResponse({
+		status: HttpStatus.FORBIDDEN,
+		description: "User does not have access to this book.",
+	})
 	findOne(@Param("id") id: string, @Request() req) {
 		return this.booksService.findOne(id, req.user);
 	}
 
 	@Patch(":id")
-	@ApiOperation({ summary: "Update a book" })
+	@ApiOperation({
+		summary: "Update a book",
+		description:
+			"Updates a book's information and/or cover image. The image will be uploaded to Cloudinary and the URL will be updated.",
+	})
+	@ApiParam({
+		name: "id",
+		description: "The ID of the book to update",
+		type: "string",
+		format: "uuid",
+	})
+	@ApiConsumes("multipart/form-data")
+	@ApiBody({
+		schema: {
+			type: "object",
+			properties: {
+				title: {
+					type: "string",
+					example: "The Great Gatsby (Updated)",
+					description: "The updated title of the book",
+				},
+				author: {
+					type: "string",
+					example: "F. Scott Fitzgerald",
+					description: "The updated author of the book",
+				},
+				year: {
+					type: "number",
+					example: 1925,
+					description: "The updated publication year",
+				},
+				coverImage: {
+					type: "string",
+					format: "binary",
+					description:
+						"New book cover image (JPG, JPEG, or PNG, max 5MB). The image will be resized to 500x500 pixels while maintaining aspect ratio.",
+				},
+			},
+		},
+	})
+	@UseInterceptors(FileInterceptor("coverImage", { storage: memoryStorage() }))
 	@ApiResponse({
-		status: 200,
+		status: HttpStatus.OK,
 		description: "The book has been successfully updated.",
 		type: Book,
 	})
-	@ApiResponse({ status: 400, description: "Bad request." })
-	@ApiResponse({ status: 401, description: "Unauthorized." })
-	@ApiResponse({ status: 403, description: "Forbidden." })
-	@ApiResponse({ status: 404, description: "Book not found." })
-	update(
+	@ApiResponse({
+		status: HttpStatus.BAD_REQUEST,
+		description: "Invalid input data or file format/size.",
+	})
+	@ApiResponse({
+		status: HttpStatus.NOT_FOUND,
+		description: "Book not found.",
+	})
+	@ApiResponse({
+		status: HttpStatus.UNAUTHORIZED,
+		description: "User is not authenticated.",
+	})
+	@ApiResponse({
+		status: HttpStatus.FORBIDDEN,
+		description: "User does not have access to this book.",
+	})
+	async update(
 		@Param("id") id: string,
 		@Body() updateBookDto: UpdateBookDto,
 		@Request() req,
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: FILE_SIZE_LIMIT }),
+					new FileTypeValidator({ fileType: ALLOWED_FILE_TYPES }),
+				],
+				fileIsRequired: false,
+			}),
+		)
+		file?: Express.Multer.File,
 	) {
-		return this.booksService.update(id, updateBookDto, req.user);
+		const coverImageUrl = file
+			? await this.cloudinaryService.uploadImage(file)
+			: undefined;
+		return this.booksService.update(
+			id,
+			{ ...updateBookDto, coverImageUrl },
+			req.user,
+		);
 	}
 
 	@Delete(":id")
-	@ApiOperation({ summary: "Delete a book" })
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiOperation({
+		summary: "Delete a book",
+		description:
+			"Deletes a book and its associated cover image from Cloudinary.",
+	})
+	@ApiParam({
+		name: "id",
+		description: "The ID of the book to delete",
+		type: "string",
+		format: "uuid",
+	})
 	@ApiResponse({
-		status: 200,
+		status: HttpStatus.NO_CONTENT,
 		description: "The book has been successfully deleted.",
 	})
-	@ApiResponse({ status: 401, description: "Unauthorized." })
-	@ApiResponse({ status: 403, description: "Forbidden." })
-	@ApiResponse({ status: 404, description: "Book not found." })
-	remove(@Param("id") id: string, @Request() req) {
-		return this.booksService.remove(id, req.user);
+	@ApiResponse({
+		status: HttpStatus.NOT_FOUND,
+		description: "Book not found.",
+	})
+	@ApiResponse({
+		status: HttpStatus.UNAUTHORIZED,
+		description: "User is not authenticated.",
+	})
+	@ApiResponse({
+		status: HttpStatus.FORBIDDEN,
+		description: "User does not have access to this book.",
+	})
+	async remove(@Param("id") id: string, @Request() req) {
+		await this.booksService.remove(id, req.user);
 	}
 }
