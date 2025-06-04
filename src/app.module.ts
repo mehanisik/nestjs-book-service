@@ -4,6 +4,7 @@ import appConfig from "./config/app/app.config";
 import databaseConfig from "./config/database/database.config";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { AuthModule } from "./api/auth/auth.module";
 
 @Module({
 	imports: [
@@ -18,6 +19,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 			useFactory: databaseConfig,
 		}),
 		HealthModule,
+		AuthModule,
 	],
 })
 export class AppModule {}
