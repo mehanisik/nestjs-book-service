@@ -13,10 +13,6 @@ export function getAppConfig(): AppConfig {
 				? process.env.APP_CORS_ORIGIN.split(",")
 				: process.env.APP_CORS_ORIGIN
 			: "http://localhost:3000",
-		jwtSecret: process.env.APP_JWT_SECRET,
-		jwtExpiresIn: process.env.APP_JWT_EXPIRES_IN || "1h",
-		cloudinaryUrl: process.env.CLOUDINARY_URL,
-		cloudinaryFolder: process.env.CLOUDINARY_FOLDER || "nestjs_book_api_covers",
 	};
 }
 
