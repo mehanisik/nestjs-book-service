@@ -3,7 +3,7 @@ import { AppConfig } from "./app-config.type";
 
 export function getAppConfig(): AppConfig {
 	return {
-		port: Number.parseInt(process.env.APP_PORT || "8000", 10),
+		port: Number.parseInt(process.env.APP_PORT || "8000"),
 		env: process.env.APP_NODE_ENV || "local",
 		name: process.env.APP_NAME || "nestjs_book_api",
 		url: process.env.APP_URL || "http://localhost:8000",
@@ -13,6 +13,8 @@ export function getAppConfig(): AppConfig {
 				? process.env.APP_CORS_ORIGIN.split(",")
 				: process.env.APP_CORS_ORIGIN
 			: "http://localhost:3000",
+		jwtSecret: process.env.APP_JWT_SECRET,
+		jwtExpiresIn: process.env.APP_JWT_EXPIRES_IN || "1h",
 	};
 }
 

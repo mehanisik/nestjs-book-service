@@ -5,4 +5,6 @@ export type AppConfig = {
 	url: string;
 	version: string;
 	corsOrigin: string | string[];
+	jwtSecret: string;
+	jwtExpiresIn: string;
 };
