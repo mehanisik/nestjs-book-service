@@ -36,4 +36,5 @@ async function bootstrap() {
 	logger.log(`🚀 Server running at http://localhost:${port}/api`);
 	return app;
 }
+
 bootstrap();

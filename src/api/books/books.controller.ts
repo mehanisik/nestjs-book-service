@@ -34,7 +34,7 @@ import { Book } from "./entities/book.entity";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { memoryStorage } from "multer";
 
-const FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB
+const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 const ALLOWED_FILE_TYPES = /(jpg|jpeg|png)$/;
 
 @ApiTags("Books")
@@ -69,6 +69,11 @@ export class BooksController {
 					type: "string",
 					example: "F. Scott Fitzgerald",
 					description: "The author of the book",
+				},
+				description: {
+					type: "string",
+					example: "A story of the American Dream in the 1920s",
+					description: "A brief description or summary of the book",
 				},
 				year: {
 					type: "number",
@@ -198,6 +203,11 @@ export class BooksController {
 					type: "string",
 					example: "F. Scott Fitzgerald",
 					description: "The updated author of the book",
+				},
+				description: {
+					type: "string",
+					example: "An updated description of the American Dream in the 1920s",
+					description: "The updated description or summary of the book",
 				},
 				year: {
 					type: "number",
