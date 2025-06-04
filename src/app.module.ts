@@ -1,10 +1,9 @@
 import { Module } from "@nestjs/common";
-import { HealthModule } from "./api/health/health.module";
 import appConfig from "./config/app/app.config";
 import databaseConfig from "./config/database/database.config";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AuthModule } from "./api/auth/auth.module";
+import { ApiModule } from "./api/api.module";
 
 @Module({
 	imports: [
@@ -18,8 +17,7 @@ import { AuthModule } from "./api/auth/auth.module";
 			inject: [ConfigService],
 			useFactory: databaseConfig,
 		}),
-		HealthModule,
-		AuthModule,
+		ApiModule,
 	],
 })
 export class AppModule {}
