@@ -25,6 +25,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.2",
     "@nestjs/platform-express": "^11.1.2",
+    "@nestjs/swagger": "^11.2.0",
     "@nestjs/terminus": "^11.0.0",
     "dotenv": "^16.5.0",
     "lint-staged": "^16.1.0",
