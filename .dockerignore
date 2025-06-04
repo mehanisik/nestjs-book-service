@@ -1,0 +1,39 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies
+node_modules
+.pnpm-store
+
+# Environment
+.env
+.env.*
+
+# Build output
+dist
+build
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore 

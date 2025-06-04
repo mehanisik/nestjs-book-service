@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: book-service-api
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NODE_ENV=${APP_NODE_ENV}
+      - APP_PORT=${APP_PORT}
+      - APP_URL=${APP_URL}
+      - APP_NAME=${APP_NAME}
+      - APP_VERSION=${APP_VERSION}
+      - APP_CORS_ORIGIN=${APP_CORS_ORIGIN}
+      - APP_JWT_SECRET=${APP_JWT_SECRET}
+      - APP_JWT_EXPIRATION=${APP_JWT_EXPIRATION}
+      - DATABASE_URL=${DATABASE_URL}
+      - CLOUDINARY_URL=${CLOUDINARY_URL}
+      - CLOUDINARY_FOLDER=${CLOUDINARY_FOLDER}
+    depends_on:
+      - postgres
+    networks:
+      - book-service-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: book-service-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=book_service
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - book-service-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: book-service-postgres-data
+
+networks:
+  book-service-network:
+    name: book-service-network
+    driver: bridge 
