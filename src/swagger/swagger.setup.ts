@@ -1,10 +1,10 @@
-import { type GlobalConfig } from "@/config/config.type";
+import { Config } from "@/config/config.type";
 import { type INestApplication } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from "@nestjs/swagger";
 
 function setupSwagger(app: INestApplication): OpenAPIObject {
-	const configService = app.get(ConfigService<GlobalConfig>);
+	const configService = app.get(ConfigService<Config>);
 	const appName = configService.getOrThrow("app.name", { infer: true });
 
 	const config = new DocumentBuilder()

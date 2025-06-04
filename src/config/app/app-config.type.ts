@@ -5,8 +5,4 @@ export interface AppConfig {
 	url: string;
 	version: string;
 	corsOrigin: string | string[];
-	jwtSecret: string;
-	jwtExpiresIn: string;
-	cloudinaryUrl: string;
-	cloudinaryFolder: string;
 }
