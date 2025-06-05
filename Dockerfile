@@ -20,8 +20,6 @@ RUN pnpm build
 # Production stage
 FROM node:20-alpine
 
-RUN npm install -g pnpm@9.12.2
-
 WORKDIR /app
 
 # Install pnpm

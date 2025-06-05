@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - APP_NODE_ENV=${APP_NODE_ENV}
+      - NODE_ENV=${NODE_ENV}
       - APP_PORT=${APP_PORT}
       - APP_URL=${APP_URL}
       - APP_NAME=${APP_NAME}

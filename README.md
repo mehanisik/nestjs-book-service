@@ -1,15 +1,17 @@
-# Book Service API
+# Nestjs Book Service API
 
 This is a NestJS-based API for managing books. It focuses on CRUD  operations for books, secured with JWT authentication and uses Cloudinary for image uploads.
 
 ## Features
 
 - Authentication(JWT)
-- CRUD for books
 - Image Upload(Coudinary)
 - Swagger API
 - PostgreSQL db with TypeORM
-- Docker support
+- Docker
+- Biome.json
+- Commitlint with Husky
+
 
 ## Documentation
 
@@ -23,7 +25,7 @@ http://localhost:8000/api/swagger
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/nestjs-book-service.git
+git clone https://github.com/mehanisik/nestjs-book-service.git
 cd nestjs-book-service
 ```
 
@@ -34,22 +36,20 @@ pnpm install
 
 3. Create a `.env` file in the root directory with the following variables:
 ```env
-PORT=8000
-NODE_ENV=development
+NODE_ENV=local
+APP_PORT=8000
+APP_URL=http://localhost:8000
+APP_NAME=nestjs_book_api
+APP_VERSION=1.0.0
+APP_CORS_ORIGIN=http://localhost:3000
 
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-DB_DATABASE=book_service
+APP_JWT_SECRET=
+APP_JWT_EXPIRATION=
 
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRATION=1d
+DATABASE_URL= 
 
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-CLOUDINARY_FOLDER=book-covers
+CLOUDINARY_URL=
+CLOUDINARY_FOLDER=
 ```
 
 ## Run Locally
@@ -98,34 +98,37 @@ pnpm run test
 
 ## API Reference
 
+The rest api is uses the /api prefix for each endpoint except swagger and also JWT Bearer token as header
+
 ### Authentication
 
 #### Register User
 ```http
-POST /auth/register
+POST /api/auth/sign-up
 ```
 
 | Parameter  | Type     | Description                    |
 | :--------  | :------- | :---------------------------- |
-| `email`    | `string` | **Required**. User's email    |
-| `username` | `string` | **Required**. User's username |
-| `password` | `string` | **Required**. User's password |
+| `email`    | `string` | **Required**  |
+| `username` | `string` | **Required**  |
+| `password` | `string` | **Required**  |
+| `confirmPassword` | `string` | **Required**.|
 
 #### Login
 ```http
-POST /auth/login
+POST /api/auth/sign-in
 ```
 
 | Parameter  | Type     | Description                    |
 | :--------  | :------- | :---------------------------- |
-| `email`    | `string` | **Required**. User's email    |
-| `password` | `string` | **Required**. User's password |
+| `email`    | `string` | **Required**    |
+| `password` | `string` | **Required** |
 
 ### Books
 
 #### Get All Books
 ```http
-GET /books
+GET api/books
 ```
 
 | Header     | Type     | Description                    |
@@ -134,7 +137,7 @@ GET /books
 
 #### Get Book by ID
 ```http
-GET /books/:id
+GET api/books/:id
 ```
 
 | Parameter  | Type     | Description                    |
@@ -144,7 +147,7 @@ GET /books/:id
 
 #### Create Book
 ```http
-POST /books
+POST api/books
 ```
 
 | Parameter     | Type     | Description                    |
@@ -158,7 +161,7 @@ POST /books
 
 #### Update Book
 ```http
-PATCH /books/:id
+PATCH api/books/:id
 ```
 
 | Parameter     | Type     | Description                    |
@@ -173,7 +176,7 @@ PATCH /books/:id
 
 #### Delete Book
 ```http
-DELETE /books/:id
+DELETE api/books/:id
 ```
 
 | Parameter  | Type     | Description                    |
